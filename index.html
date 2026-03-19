@@ -13,16 +13,21 @@
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 		<style>
 			:root {
-				--panel-accent: rgba(115, 167, 120, 0.25);
+				--panel-accent: rgba(115, 167, 120, 0.24);
 				--panel-soft: rgba(255, 255, 255, 0.05);
 				--chart-line: #73c98d;
 				--chart-line-alt: #ffd17c;
+				--chart-line-third: #7bc0ff;
 				--chart-fill: rgba(115, 201, 141, 0.14);
+				--tone-positive: #73c98d;
+				--tone-warm: #ffd17c;
+				--tone-cool: #7bc0ff;
 			}
 
 			.metrics-grid,
 			.story-grid,
-			.table-grid {
+			.table-grid,
+			.chart-grid {
 				display: grid;
 				gap: 1rem;
 			}
@@ -38,9 +43,15 @@
 				margin-top: 1.5rem;
 			}
 
+			.chart-grid {
+				grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+				margin-top: 1.5rem;
+			}
+
 			.metric-card,
 			.story-card,
-			.data-panel {
+			.data-panel,
+			.chart-shell {
 				background: var(--panel-soft);
 				border: solid 1px var(--panel-accent);
 				border-radius: 0.4rem;
@@ -75,9 +86,6 @@
 
 			.chart-shell {
 				margin: 1.5rem 0;
-				padding: 1rem;
-				border: solid 1px var(--panel-accent);
-				border-radius: 0.4rem;
 				background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
 			}
 
@@ -109,21 +117,26 @@
 				fill: var(--chart-fill);
 			}
 
-			.chart-line {
+			.chart-line,
+			.chart-line-alt,
+			.chart-line-third {
 				fill: none;
-				stroke: var(--chart-line);
 				stroke-width: 3;
 				stroke-linecap: round;
 				stroke-linejoin: round;
 			}
 
+			.chart-line {
+				stroke: var(--chart-line);
+			}
+
 			.chart-line-alt {
-				fill: none;
 				stroke: var(--chart-line-alt);
-				stroke-width: 3;
 				stroke-dasharray: 7 5;
-				stroke-linecap: round;
-				stroke-linejoin: round;
+			}
+
+			.chart-line-third {
+				stroke: var(--chart-line-third);
 			}
 
 			.chart-band {
@@ -161,6 +174,10 @@
 				color: #f7d8a1;
 			}
 
+			.legend-third {
+				color: var(--chart-line-third);
+			}
+
 			.table-wrapper table td,
 			.table-wrapper table th {
 				font-size: 0.92rem;
@@ -170,8 +187,76 @@
 				max-width: 46rem;
 			}
 
-			.inline-stat {
-				color: #73c98d;
+			.heatmap-table td {
+				text-align: center;
+				font-weight: 600;
+			}
+
+			.mini-chart-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+				gap: 1rem;
+				margin-top: 1rem;
+			}
+
+			.mini-chart {
+				background: rgba(255, 255, 255, 0.02);
+				border: solid 1px rgba(255, 255, 255, 0.07);
+				border-radius: 0.3rem;
+				padding: 0.85rem;
+			}
+
+			.mini-chart h4,
+			.map-title {
+				margin: 0 0 0.5rem 0;
+			}
+
+			.mini-chart p {
+				margin: 0 0 0.65rem 0;
+				font-size: 0.9rem;
+				opacity: 0.8;
+			}
+
+			.scatter-point {
+				fill: rgba(123, 192, 255, 0.38);
+			}
+
+			.bar-fill {
+				fill: rgba(115, 201, 141, 0.8);
+			}
+
+			.bar-fill-alt {
+				fill: rgba(255, 209, 124, 0.86);
+			}
+
+			.surface-cell {
+				stroke: rgba(255, 255, 255, 0.08);
+				stroke-width: 0.4;
+			}
+
+			.map-point {
+				stroke: rgba(0, 0, 0, 0.65);
+				stroke-width: 0.8;
+			}
+
+			.map-annotation {
+				font-size: 10px;
+				fill: rgba(255, 255, 255, 0.88);
+			}
+
+			.badge-row {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.6rem;
+				margin-top: 0.75rem;
+			}
+
+			.badge {
+				border: solid 1px var(--panel-accent);
+				border-radius: 999px;
+				padding: 0.25rem 0.65rem;
+				font-size: 0.82rem;
+				opacity: 0.9;
 			}
 
 			@media screen and (max-width: 736px) {
@@ -182,7 +267,6 @@
 		</style>
 	</head>
 	<body class="is-preload">
-
 		<div id="wrapper">
 
 			<header id="header">
@@ -192,13 +276,15 @@
 				<div class="content">
 					<div class="inner">
 						<h1 id="project-title">Analyzing the Relationship Between Weather Patterns and Coffee Commodity Prices</h1>
-						<p id="project-subtitle">Daily weather observations, commodity pricing trends, and a short-horizon statistical forecast displayed inside a single project dashboard.</p>
+						<p id="project-subtitle">Daily weather observations, commodity pricing trends, geospatial regime analysis, and kriging interpolation inside a single project dashboard.</p>
 					</div>
 				</div>
 				<nav>
 					<ul>
 						<li><a href="#overview">Overview</a></li>
 						<li><a href="#findings">Findings</a></li>
+						<li><a href="#visuals">Visuals</a></li>
+						<li><a href="#geospatial">Geospatial</a></li>
 						<li><a href="#forecast">Forecast</a></li>
 						<li><a href="#method">Method</a></li>
 					</ul>
@@ -210,7 +296,7 @@
 				<article id="overview">
 					<h2 class="major">Overview</h2>
 					<span class="image main"><img src="images/pic01.jpg" alt="Coffee field landscape" /></span>
-					<p class="article-intro">This project examines whether broad weather conditions across coffee-growing regions move together with coffee commodity prices. The dashboard combines historical market closes with temperature, humidity, precipitation, and solar radiation data to surface the clearest patterns in the dataset.</p>
+					<p class="article-intro">This project examines how weather patterns across coffee-growing regions align with market-wide coffee price movements. The site now includes the notebook-style visuals and geospatial analysis directly in the page, including a kriging surface for the latest precipitation snapshot.</p>
 					<div id="overview-metrics" class="metrics-grid"></div>
 					<div id="overview-story" class="story-grid"></div>
 					<div id="history-chart" class="chart-shell"></div>
@@ -219,16 +305,16 @@
 				<article id="findings">
 					<h2 class="major">Findings</h2>
 					<span class="image main"><img src="images/pic02.jpg" alt="Coffee beans and trading analysis" /></span>
-					<p class="article-intro">The weather-price relationship is not especially strong at the aggregate daily level, but the dataset still reveals which climate measures move most consistently with price and which growing regions sit in the most extreme conditions.</p>
+					<p class="article-intro">The aggregate weather-price relationship remains modest, but the dataset still exposes clear market regimes, exchange-rate context, and regional weather extremes. These summary tables anchor the rest of the dashboard before moving into the richer visual analysis.</p>
 					<div class="table-grid">
 						<div class="data-panel">
 							<h3>Weather Correlations</h3>
-							<p class="note-text">Pearson correlations between daily coffee prices and the market-wide weather averages across all tracked locations.</p>
+							<p class="note-text">Pearson correlations between daily coffee prices and market-level weather averages across all tracked locations.</p>
 							<div id="weather-table" class="table-wrapper"></div>
 						</div>
 						<div class="data-panel">
 							<h3>Currency Context</h3>
-							<p class="note-text">Exchange rates are included in the dataset and show materially larger correlations with price than any single weather variable.</p>
+							<p class="note-text">Exchange-rate variables show materially larger correlations with price than any single weather factor in this dataset.</p>
 							<div id="currency-table" class="table-wrapper"></div>
 						</div>
 					</div>
@@ -241,6 +327,47 @@
 							<h3>Wettest Locations</h3>
 							<div id="wet-locations" class="table-wrapper"></div>
 						</div>
+					</div>
+				</article>
+
+				<article id="visuals">
+					<h2 class="major">Visuals</h2>
+					<p class="article-intro">These panels bring the notebook charts onto the site: long-run price movement, recent market behavior, correlation structure, scatter relationships, and distribution profiles for the core variables.</p>
+					<div id="recent-price-chart" class="chart-shell"></div>
+					<div class="table-grid">
+						<div class="data-panel">
+							<h3>Correlation Heatmap</h3>
+							<p class="note-text">Pairwise relationships between coffee price, weather averages, and exchange rates.</p>
+							<div id="correlation-heatmap"></div>
+						</div>
+						<div class="data-panel">
+							<h3>Variable Distributions</h3>
+							<p class="note-text">Histogram views for the main weather variables and the coffee price series.</p>
+							<div id="distribution-grid" class="mini-chart-grid"></div>
+						</div>
+					</div>
+					<div class="data-panel">
+						<h3>Weather vs Price Scatterplots</h3>
+						<p class="note-text">Sampled daily observations with trend overlays, designed to mirror the notebook exploration without overloading the page.</p>
+						<div id="scatter-grid" class="mini-chart-grid"></div>
+					</div>
+				</article>
+
+				<article id="geospatial">
+					<h2 class="major">Geospatial</h2>
+					<p class="article-intro">Because the coffee commodity price is market-wide and repeated across locations on each date, the geographic analysis is framed around regional weather regimes rather than claiming a unique local price by coordinate. The site shows regional point maps, regime shifts, coordinate-based model comparison, and a kriging interpolation surface.</p>
+					<div id="geo-metrics" class="metrics-grid"></div>
+					<div class="chart-grid">
+						<div id="location-map" class="chart-shell"></div>
+						<div id="cluster-map" class="chart-shell"></div>
+					</div>
+					<div class="chart-grid">
+						<div id="regime-bar-chart" class="chart-shell"></div>
+						<div id="model-bar-chart" class="chart-shell"></div>
+					</div>
+					<div class="chart-grid">
+						<div id="kriging-surface" class="chart-shell"></div>
+						<div id="kriging-variance" class="chart-shell"></div>
 					</div>
 				</article>
 
@@ -259,7 +386,7 @@
 
 				<article id="method">
 					<h2 class="major">Method</h2>
-					<p class="article-intro">This page is powered directly from the uploaded CSV. The analysis artifacts are generated once into a static JavaScript file, which means the site can be hosted as plain HTML without any backend.</p>
+					<p class="article-intro">This page is powered directly from the CSV and a generated JavaScript data bundle. That keeps the project easy to host as plain HTML while still showing statistical visuals and geospatial interpolation results.</p>
 					<div id="method-metrics" class="metrics-grid"></div>
 					<div class="data-panel">
 						<h3>Methodology Notes</h3>
@@ -284,6 +411,5 @@
 		<script src="assets/js/main.js"></script>
 		<script src="assets/js/analysis-data.js"></script>
 		<script src="assets/js/analysis.js"></script>
-
 	</body>
 </html>
