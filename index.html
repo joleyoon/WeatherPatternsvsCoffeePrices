@@ -187,6 +187,28 @@
 				max-width: 46rem;
 			}
 
+			#header nav {
+				max-width: 100%;
+			}
+
+			#header nav ul {
+				width: min(100%, 58rem);
+				flex-wrap: wrap;
+				justify-content: center;
+				margin-left: auto;
+				margin-right: auto;
+			}
+
+			#header nav ul li {
+				flex: 1 1 9rem;
+				text-align: center;
+			}
+
+			#header nav ul li a {
+				min-width: 0;
+				padding: 0 1rem;
+			}
+
 			.heatmap-table td {
 				text-align: center;
 				font-weight: 600;
@@ -260,8 +282,22 @@
 			}
 
 			@media screen and (max-width: 736px) {
+				#header nav ul {
+					width: 100%;
+				}
+
+				#header nav ul li {
+					flex-basis: 48%;
+				}
+
 				.metric-value {
 					font-size: 1.5rem;
+				}
+			}
+
+			@media screen and (max-width: 480px) {
+				#header nav ul li {
+					flex-basis: 100%;
 				}
 			}
 		</style>
