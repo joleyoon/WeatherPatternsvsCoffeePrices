@@ -346,9 +346,7 @@
 				<nav>
 					<ul>
 						<li><a href="#overview">Overview</a></li>
-						<li><a href="#findings">Findings</a></li>
-						<li><a href="#visuals">Visuals</a></li>
-						<li><a href="#geospatial">Geospatial</a></li>
+						<li><a href="#analysis">Analysis</a></li>
 						<li><a href="#forecast">Forecast</a></li>
 						<li><a href="#method">Method</a></li>
 					</ul>
@@ -366,10 +364,10 @@
 					<div id="history-chart" class="chart-shell"></div>
 				</article>
 
-				<article id="findings">
-					<h2 class="major">Findings</h2>
+				<article id="analysis">
+					<h2 class="major">Analysis</h2>
 					<span class="image main"><img src="images/pic02.jpg" alt="Coffee beans and trading analysis" /></span>
-					<p class="article-intro">The aggregate weather-price relationship remains modest, but the dataset still exposes clear market regimes, exchange-rate context, and regional weather extremes. These summary tables anchor the rest of the dashboard before moving into the richer visual analysis.</p>
+					<p class="article-intro">This section combines the key findings, supporting visuals, and geospatial interpretation into one place. It keeps the strongest parts of the analysis: the market-level summary tables, relationship charts, location-based comparisons, and the kriging surface for the latest precipitation snapshot.</p>
 					<div class="table-grid">
 						<div class="data-panel">
 							<h3>Weather Correlations</h3>
@@ -392,11 +390,10 @@
 							<div id="wet-locations" class="table-wrapper"></div>
 						</div>
 					</div>
-				</article>
-
-				<article id="visuals">
-					<h2 class="major">Visuals</h2>
-					<p class="article-intro">These panels bring the notebook charts onto the site: long-run price movement, recent market behavior, correlation structure, scatter relationships, and distribution profiles for the core variables.</p>
+					<div class="data-panel">
+						<h3>Price and Relationship Visuals</h3>
+						<p class="note-text">These panels bring the notebook-style charts onto the site: recent market behavior, correlation structure, scatter relationships, and distribution profiles for the core variables.</p>
+					</div>
 					<div id="recent-price-chart" class="chart-shell"></div>
 					<div class="table-grid">
 						<div class="data-panel">
@@ -415,11 +412,10 @@
 						<p class="note-text">Sampled daily observations with trend overlays, designed to mirror the notebook exploration without overloading the page.</p>
 						<div id="scatter-grid" class="mini-chart-grid"></div>
 					</div>
-				</article>
-
-				<article id="geospatial">
-					<h2 class="major">Geospatial</h2>
-					<p class="article-intro">Because the coffee commodity price is market-wide and repeated across locations on each date, the geographic analysis is framed around regional weather regimes rather than claiming a unique local price by coordinate. The site shows regional point maps, regime shifts, coordinate-based model comparison, and a kriging interpolation surface.</p>
+					<div class="data-panel">
+						<h3>Geospatial Analysis</h3>
+						<p class="note-text">Because the coffee commodity price is market-wide and repeated across locations on each date, the geography is interpreted as regional weather context rather than a unique local price by coordinate.</p>
+					</div>
 					<div id="geo-metrics" class="metrics-grid"></div>
 					<div class="chart-grid">
 						<div id="location-map" class="chart-shell"></div>
