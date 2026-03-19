@@ -193,15 +193,24 @@
 
 			#header nav ul {
 				width: min(100%, 58rem);
-				flex-wrap: wrap;
-				justify-content: center;
+				display: grid;
+				grid-template-columns: repeat(4, minmax(0, 1fr));
 				margin-left: auto;
 				margin-right: auto;
 			}
 
 			#header nav ul li {
-				flex: 1 1 9rem;
+				flex: none;
 				text-align: center;
+				border-left: solid 1px #ffffff;
+			}
+
+			#header nav ul li:nth-child(4n + 1) {
+				border-left: 0;
+			}
+
+			#header nav ul li:nth-child(n + 5) {
+				border-top: solid 1px #ffffff;
 			}
 
 			#header nav ul li a {
@@ -284,10 +293,20 @@
 			@media screen and (max-width: 736px) {
 				#header nav ul {
 					width: 100%;
+					grid-template-columns: repeat(2, minmax(0, 1fr));
 				}
 
 				#header nav ul li {
-					flex-basis: 48%;
+					border-left: solid 1px #ffffff;
+					border-top: 0;
+				}
+
+				#header nav ul li:nth-child(2n + 1) {
+					border-left: 0;
+				}
+
+				#header nav ul li:nth-child(n + 3) {
+					border-top: solid 1px #ffffff;
 				}
 
 				.metric-value {
@@ -296,8 +315,17 @@
 			}
 
 			@media screen and (max-width: 480px) {
+				#header nav ul {
+					grid-template-columns: 1fr;
+				}
+
 				#header nav ul li {
-					flex-basis: 100%;
+					border-left: 0;
+					border-top: solid 1px #ffffff;
+				}
+
+				#header nav ul li:first-child {
+					border-top: 0;
 				}
 			}
 		</style>
