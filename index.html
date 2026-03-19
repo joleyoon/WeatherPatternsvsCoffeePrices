@@ -188,35 +188,99 @@
 			}
 
 			#header nav {
-				max-width: 100%;
-			}
+	max-width: 100%;
+	margin-top: 2rem;
+}
 
-			#header nav ul {
-				width: min(100%, 58rem);
-				display: grid;
-				grid-template-columns: repeat(4, minmax(0, 1fr));
-				margin-left: auto;
-				margin-right: auto;
-			}
+#header nav ul {
+	list-style: none;
+	padding: 0;
+	margin: 0 auto;
+	width: min(100%, 52rem);
 
-			#header nav ul li {
-				flex: none;
-				text-align: center;
-				border-left: solid 1px #ffffff;
-			}
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 0.9rem;
+}
 
-			#header nav ul li:nth-child(4n + 1) {
-				border-left: 0;
-			}
+#header nav ul li {
+	text-align: center;
+}
 
-			#header nav ul li:nth-child(n + 5) {
-				border-top: solid 1px #ffffff;
-			}
+#header nav ul li a {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
-			#header nav ul li a {
-				min-width: 0;
-				padding: 0 1rem;
-			}
+	min-height: 3.5rem;
+	padding: 0.9rem 1.2rem;
+
+	border: 1px solid rgba(255,255,255,0.22);
+	border-radius: 14px;
+
+	background: rgba(255,255,255,0.06);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+
+	color: #ffffff;
+	text-decoration: none;
+
+	font-size: 0.82rem;
+	letter-spacing: 0.18rem;
+	text-transform: uppercase;
+
+	transition:
+		background 0.25s ease,
+		border-color 0.25s ease,
+		transform 0.25s ease,
+		box-shadow 0.25s ease;
+
+	box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+}
+
+/* Hover effect */
+
+#header nav ul li a:hover {
+	background: rgba(115,201,141,0.14);
+	border-color: rgba(115,201,141,0.55);
+
+	transform: translateY(-3px);
+
+	box-shadow: 0 12px 28px rgba(0,0,0,0.2);
+}
+
+#header nav ul li a:active {
+	transform: translateY(-1px);
+}
+
+/* Tablet */
+
+@media screen and (max-width: 736px) {
+
+	#header nav ul {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.75rem;
+	}
+
+	#header nav ul li a {
+		min-height: 3.2rem;
+		font-size: 0.78rem;
+		letter-spacing: 0.14rem;
+	}
+}
+
+/* Mobile */
+
+@media screen and (max-width: 480px) {
+
+	#header nav ul {
+		grid-template-columns: 1fr;
+	}
+
+	#header nav ul li a {
+		min-height: 3rem;
+	}
+}
 
 			.heatmap-table td {
 				text-align: center;
