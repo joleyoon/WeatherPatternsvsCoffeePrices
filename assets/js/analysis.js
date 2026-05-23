@@ -25,6 +25,12 @@
     return sign + number(amount, digits || 0) + (suffix || "");
   }
 
+  function signedCurrency(value) {
+    var amount = Number(value);
+    var sign = amount > 0 ? "+" : amount < 0 ? "-" : "";
+    return sign + currency(Math.abs(amount));
+  }
+
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
   }
@@ -219,6 +225,140 @@
           .join("") +
         "</div>";
     }
+
+    target.innerHTML = content;
+  }
+
+  function buildProphetChart(targetId, prophet) {
+    var target = document.getElementById(targetId);
+    if (!target || !prophet) {
+      return;
+    }
+
+    var width = 860;
+    var height = 300;
+    var points = prophet.history
+      .map(function (point) {
+        return {
+          date: point.date,
+          actual: point.actualPrice,
+          fitted: point.predictedPrice,
+          forecast: null,
+          lower: null,
+          upper: null,
+        };
+      })
+      .concat(
+        prophet.points.map(function (point) {
+          return {
+            date: point.date,
+            actual: null,
+            fitted: null,
+            forecast: point.predictedPrice,
+            lower: point.lowerBound,
+            upper: point.upperBound,
+          };
+        })
+      );
+
+    var allValues = [];
+    points.forEach(function (point) {
+      ["actual", "fitted", "forecast", "lower", "upper"].forEach(function (key) {
+        if (point[key] !== null && point[key] !== undefined) {
+          allValues.push(point[key]);
+        }
+      });
+    });
+
+    var minY = Math.min.apply(null, allValues);
+    var maxY = Math.max.apply(null, allValues);
+    var padding = (maxY - minY || 1) * 0.12;
+    minY -= padding;
+    maxY += padding;
+
+    function toX(index) {
+      return (index / Math.max(points.length - 1, 1)) * width;
+    }
+
+    function toY(value) {
+      return height - ((value - minY) / (maxY - minY || 1)) * height;
+    }
+
+    function pathFor(key) {
+      var hasOpenSegment = false;
+      var commands = [];
+      points.forEach(function (point, index) {
+        var value = point[key];
+        if (value === null || value === undefined) {
+          hasOpenSegment = false;
+          return;
+        }
+        commands.push((hasOpenSegment ? "L" : "M") + toX(index).toFixed(2) + " " + toY(value).toFixed(2));
+        hasOpenSegment = true;
+      });
+      return commands.join(" ");
+    }
+
+    var bandPoints = points
+      .map(function (point, index) {
+        return {
+          index: index,
+          lower: point.lower,
+          upper: point.upper,
+        };
+      })
+      .filter(function (point) {
+        return point.lower !== null && point.upper !== null;
+      });
+
+    var content =
+      '<div class="chart-header">' +
+      "<div><h3>Prophet Fit and Forecast</h3><p class=\"chart-caption\">" +
+      prophet.method +
+      "</p></div>" +
+      "<p>Holdout RMSE: " +
+      currency(prophet.rmse) +
+      "</p>" +
+      "</div>" +
+      '<svg class="chart-svg" viewBox="0 0 ' +
+      width +
+      " " +
+      height +
+      '" role="img" aria-label="Prophet fit and forecast">';
+
+    if (bandPoints.length) {
+      var topPath = bandPoints
+        .map(function (point, index) {
+          return (index === 0 ? "M" : "L") + toX(point.index).toFixed(2) + " " + toY(point.upper).toFixed(2);
+        })
+        .join(" ");
+      var bottomPath = bandPoints
+        .slice()
+        .reverse()
+        .map(function (point) {
+          return "L" + toX(point.index).toFixed(2) + " " + toY(point.lower).toFixed(2);
+        })
+        .join(" ");
+      content += '<path class="chart-band" d="' + topPath + " " + bottomPath + ' Z"></path>';
+    }
+
+    content +=
+      '<path class="chart-line" d="' +
+      pathFor("actual") +
+      '"></path>' +
+      '<path class="chart-line-third" d="' +
+      pathFor("fitted") +
+      '"></path>' +
+      '<path class="chart-line-alt" d="' +
+      pathFor("forecast") +
+      '"></path>' +
+      "</svg>" +
+      '<div class="legend-row">' +
+      '<span class="legend-item legend-actual">Actual close price</span>' +
+      '<span class="legend-item legend-third">Prophet fitted value</span>' +
+      '<span class="legend-item legend-forecast">Prophet forecast</span>' +
+      '<span class="legend-item legend-band">80% interval</span>' +
+      "</div>";
 
     target.innerHTML = content;
   }
@@ -552,6 +692,7 @@
     var summary = data.summary;
     var insights = data.insights;
     var forecast = data.forecast;
+    var prophet = data.prophet;
     var visuals = data.visuals;
     var geospatial = data.geospatial;
 
@@ -833,6 +974,79 @@
       ],
       forecast.points.slice(0, 10)
     );
+
+    if (prophet) {
+      buildMetrics("prophet-metrics", [
+        {
+          label: "Model",
+          value: "Prophet",
+          detail: prophet.modelType,
+        },
+        {
+          label: "Holdout Error",
+          value: currency(prophet.rmse),
+          detail: "RMSE across the latest " + prophet.holdoutDays + " observed days",
+        },
+        {
+          label: "Holdout MAPE",
+          value: number(prophet.mape, 1) + "%",
+          detail: number(prophet.coverage, 1) + "% interval coverage during validation",
+        },
+        {
+          label: "Projected Average",
+          value: currency(prophet.averageProjectedPrice),
+          detail: prophet.forecastStart + " to " + prophet.forecastEnd,
+        },
+        {
+          label: "Projected Change",
+          value: signedCurrency(prophet.trendChange),
+          detail: signed(prophet.trendChangePct, 2, "%") + " versus the latest observed close",
+        },
+      ]);
+
+      buildProphetChart("prophet-chart", prophet);
+
+      buildTable(
+        "prophet-components",
+        [
+          { label: "Driver", render: function (row) { return row.label; } },
+          { label: "Coefficient", render: function (row) { return signed(row.coefficient, 3, " USD"); } },
+          { label: "Direction", render: function (row) { return row.direction; } },
+        ],
+        prophet.components
+      );
+
+      buildTable(
+        "prophet-profile",
+        [
+          { label: "Input", render: function (row) { return row.label; } },
+          { label: "Value", render: function (row) { return number(row.value, 2) + " " + row.unit; } },
+        ],
+        prophet.regressorProfile
+      );
+
+      buildTable(
+        "prophet-table",
+        [
+          { label: "Date", render: function (row) { return row.date; } },
+          { label: "Forecast", render: function (row) { return currency(row.predictedPrice); } },
+          { label: "Lower", render: function (row) { return currency(row.lowerBound); } },
+          { label: "Upper", render: function (row) { return currency(row.upperBound); } },
+        ],
+        prophet.points.slice(0, 10)
+      );
+
+      buildTable(
+        "prophet-validation-table",
+        [
+          { label: "Date", render: function (row) { return row.date; } },
+          { label: "Actual", render: function (row) { return currency(row.actualPrice); } },
+          { label: "Predicted", render: function (row) { return currency(row.predictedPrice); } },
+          { label: "Error", render: function (row) { return signedCurrency(row.error); } },
+        ],
+        prophet.validationRows
+      );
+    }
 
     buildMetrics("method-metrics", [
       {

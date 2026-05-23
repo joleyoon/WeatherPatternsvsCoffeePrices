@@ -2,6 +2,7 @@
 
 import csv
 import json
+import logging
 import math
 import os
 from collections import defaultdict
@@ -25,6 +26,8 @@ from sklearn.preprocessing import StandardScaler
 
 from kriging_analysis import fit_variogram, load_snapshot, ordinary_kriging
 
+logging.getLogger("cmdstanpy").setLevel(logging.WARNING)
+logging.getLogger("prophet").setLevel(logging.WARNING)
 
 ROOT = Path(__file__).resolve().parent.parent
 DATASET_PATH = ROOT / "Coffee_Data_Set.csv"
@@ -58,6 +61,17 @@ FX_FIELDS = {
     "brl": "Brazilian real",
     "cny": "Chinese yuan",
     "mxn": "Mexican peso",
+}
+
+PROPHET_REGRESSORS = {
+    "Temp_Max": {"label": "Max temperature", "unit": "C"},
+    "Temp_Min": {"label": "Min temperature", "unit": "C"},
+    "Humidity": {"label": "Humidity", "unit": "%"},
+    "Solar_Radiation": {"label": "Solar radiation", "unit": "MJ/m2"},
+    "Precipitation_mm": {"label": "Precipitation", "unit": "mm"},
+    "brl": {"label": "Brazilian real", "unit": "BRL/USD"},
+    "cny": {"label": "Chinese yuan", "unit": "CNY/USD"},
+    "mxn": {"label": "Mexican peso", "unit": "MXN/USD"},
 }
 
 
@@ -483,6 +497,218 @@ def build_geospatial(frame, daily):
     }
 
 
+def build_prophet_analysis(daily):
+    horizon = 30
+    holdout_days = 180
+    history_window = 120
+    regressor_columns = list(PROPHET_REGRESSORS.keys())
+
+    model_frame = (
+        daily[["Date", "Close_USD_60kg", *regressor_columns]]
+        .rename(columns={"Date": "ds", "Close_USD_60kg": "y"})
+        .sort_values("ds")
+        .dropna(subset=["ds", "y"])
+        .reset_index(drop=True)
+    )
+    model_frame[regressor_columns] = model_frame[regressor_columns].ffill().bfill()
+
+    try:
+        from prophet import Prophet
+        from prophet.utilities import regressor_coefficients
+
+        try:
+            from cmdstanpy import disable_logging
+
+            disable_logging()
+        except Exception:
+            pass
+    except Exception as exc:
+        recent_prices = model_frame["y"].tail(180).tolist()
+        regression_x = list(range(len(recent_prices)))
+        slope, intercept = linear_regression(regression_x, recent_prices)
+        fitted = [intercept + slope * x for x in regression_x]
+        residuals = [actual - predicted for actual, predicted in zip(recent_prices, fitted)]
+        rmse = (sum(error * error for error in residuals) / len(residuals)) ** 0.5
+        last_date = model_frame["ds"].max().date()
+        recent_frame = model_frame.tail(len(recent_prices)).copy().reset_index(drop=True)
+        recent_frame["predicted"] = fitted
+        points = []
+        for step in range(1, horizon + 1):
+            predicted = intercept + slope * (len(recent_prices) - 1 + step)
+            points.append(
+                {
+                    "date": (last_date + timedelta(days=step)).isoformat(),
+                    "predictedPrice": rounded(predicted, 2),
+                    "lowerBound": rounded(predicted - rmse, 2),
+                    "upperBound": rounded(predicted + rmse, 2),
+                    "trend": rounded(predicted, 2),
+                    "yearly": 0,
+                    "weekly": 0,
+                }
+            )
+
+        return {
+            "available": False,
+            "method": f"Prophet was unavailable while generating this bundle ({type(exc).__name__}); this section uses the recent linear fallback.",
+            "modelType": "Linear fallback",
+            "horizonDays": horizon,
+            "holdoutDays": len(recent_prices),
+            "forecastStart": points[0]["date"],
+            "forecastEnd": points[-1]["date"],
+            "averageProjectedPrice": rounded(mean(item["predictedPrice"] for item in points), 2),
+            "minProjectedPrice": min(item["predictedPrice"] for item in points),
+            "maxProjectedPrice": max(item["predictedPrice"] for item in points),
+            "rmse": rounded(rmse, 2),
+            "mae": rounded(mean(abs(error) for error in residuals), 2),
+            "mape": rounded(mean(abs(error / actual) for error, actual in zip(residuals, recent_prices)) * 100, 2),
+            "coverage": 0,
+            "trendChange": rounded(points[-1]["predictedPrice"] - model_frame["y"].iloc[-1], 2),
+            "trendChangePct": rounded(((points[-1]["predictedPrice"] / model_frame["y"].iloc[-1]) - 1) * 100, 2),
+            "history": [
+                {
+                    "date": row["ds"].date().isoformat(),
+                    "actualPrice": rounded(row["y"], 2),
+                    "predictedPrice": rounded(row["predicted"], 2),
+                }
+                for _, row in recent_frame.tail(history_window).iterrows()
+            ],
+            "points": points,
+            "components": [],
+            "regressorProfile": [],
+            "validationRows": [],
+        }
+
+    def make_model():
+        model = Prophet(
+            yearly_seasonality=True,
+            weekly_seasonality=True,
+            daily_seasonality=False,
+            seasonality_mode="additive",
+            changepoint_prior_scale=0.05,
+            interval_width=0.8,
+        )
+        for column in regressor_columns:
+            model.add_regressor(column, standardize=True)
+        return model
+
+    train = model_frame.iloc[:-holdout_days].copy()
+    holdout = model_frame.iloc[-holdout_days:].copy()
+
+    validation_model = make_model()
+    validation_model.fit(train)
+    holdout_prediction = validation_model.predict(holdout[["ds", *regressor_columns]])
+    holdout_actual = holdout["y"].to_numpy()
+    holdout_predicted = holdout_prediction["yhat"].to_numpy()
+    errors = holdout_actual - holdout_predicted
+    rmse = float(np.sqrt(np.mean(errors**2)))
+    mae = float(np.mean(np.abs(errors)))
+    mape = float(np.mean(np.abs(errors / holdout_actual)) * 100)
+    coverage = float(
+        np.mean(
+            (holdout_actual >= holdout_prediction["yhat_lower"].to_numpy())
+            & (holdout_actual <= holdout_prediction["yhat_upper"].to_numpy())
+        )
+        * 100
+    )
+
+    final_model = make_model()
+    final_model.fit(model_frame)
+
+    future_dates = pd.date_range(model_frame["ds"].max() + pd.Timedelta(days=1), periods=horizon, freq="D")
+    future = pd.DataFrame({"ds": future_dates})
+    future_profile = model_frame[regressor_columns].tail(30).mean()
+    for column in regressor_columns:
+        future[column] = future_profile[column]
+
+    future_prediction = final_model.predict(future)
+    history_source = model_frame.tail(history_window).copy()
+    history_prediction = final_model.predict(history_source[["ds", *regressor_columns]])
+
+    coefficient_frame = regressor_coefficients(final_model)
+    coefficient_frame["abs_coef"] = coefficient_frame["coef"].abs()
+    coefficient_frame = coefficient_frame.sort_values("abs_coef", ascending=False).head(8)
+
+    last_actual = float(model_frame["y"].iloc[-1])
+    last_projected = float(future_prediction["yhat"].iloc[-1])
+
+    validation_rows = []
+    validation_compare = holdout.copy().reset_index(drop=True)
+    validation_compare["yhat"] = holdout_prediction["yhat"].to_numpy()
+    validation_compare["error"] = validation_compare["y"] - validation_compare["yhat"]
+    for _, row in validation_compare.tail(10).iterrows():
+        validation_rows.append(
+            {
+                "date": row["ds"].date().isoformat(),
+                "actualPrice": rounded(row["y"], 2),
+                "predictedPrice": rounded(row["yhat"], 2),
+                "error": rounded(row["error"], 2),
+            }
+        )
+
+    return {
+        "available": True,
+        "method": "Prophet additive trend and seasonality model with aggregated weather and FX regressors; future regressor inputs are held at their latest 30-day averages.",
+        "modelType": "Prophet with weather and FX regressors",
+        "horizonDays": horizon,
+        "holdoutDays": holdout_days,
+        "intervalWidth": 80,
+        "forecastStart": future_prediction["ds"].iloc[0].date().isoformat(),
+        "forecastEnd": future_prediction["ds"].iloc[-1].date().isoformat(),
+        "averageProjectedPrice": rounded(future_prediction["yhat"].mean(), 2),
+        "minProjectedPrice": rounded(future_prediction["yhat"].min(), 2),
+        "maxProjectedPrice": rounded(future_prediction["yhat"].max(), 2),
+        "rmse": rounded(rmse, 2),
+        "mae": rounded(mae, 2),
+        "mape": rounded(mape, 2),
+        "coverage": rounded(coverage, 1),
+        "trendChange": rounded(last_projected - last_actual, 2),
+        "trendChangePct": rounded(((last_projected / last_actual) - 1) * 100, 2),
+        "seasonality": {
+            "yearlyRange": rounded(future_prediction["yearly"].max() - future_prediction["yearly"].min(), 2),
+            "weeklyRange": rounded(future_prediction["weekly"].max() - future_prediction["weekly"].min(), 2),
+        },
+        "regressorProfile": [
+            {
+                "name": column,
+                "label": PROPHET_REGRESSORS[column]["label"],
+                "value": rounded(future_profile[column], 2),
+                "unit": PROPHET_REGRESSORS[column]["unit"],
+            }
+            for column in regressor_columns
+        ],
+        "components": [
+            {
+                "name": row["regressor"],
+                "label": PROPHET_REGRESSORS[row["regressor"]]["label"],
+                "coefficient": rounded(row["coef"], 3),
+                "direction": "Positive" if row["coef"] >= 0 else "Negative",
+            }
+            for _, row in coefficient_frame.iterrows()
+        ],
+        "history": [
+            {
+                "date": source["ds"].date().isoformat(),
+                "actualPrice": rounded(source["y"], 2),
+                "predictedPrice": rounded(predicted["yhat"], 2),
+            }
+            for (_, source), (_, predicted) in zip(history_source.iterrows(), history_prediction.iterrows())
+        ],
+        "points": [
+            {
+                "date": row["ds"].date().isoformat(),
+                "predictedPrice": rounded(row["yhat"], 2),
+                "lowerBound": rounded(row["yhat_lower"], 2),
+                "upperBound": rounded(row["yhat_upper"], 2),
+                "trend": rounded(row["trend"], 2),
+                "yearly": rounded(row["yearly"], 2),
+                "weekly": rounded(row["weekly"], 2),
+            }
+            for _, row in future_prediction.iterrows()
+        ],
+        "validationRows": validation_rows,
+    }
+
+
 def main():
     by_date, by_location, locations, row_count, missing_weather_points = build_dataset()
     frame, daily = load_frames()
@@ -601,11 +827,12 @@ def main():
 
     visuals = build_visuals(frame, daily)
     geospatial = build_geospatial(frame, daily)
+    prophet = build_prophet_analysis(daily)
 
     generated = {
         "project": {
             "title": "Analyzing the Relationship Between Weather Patterns and Coffee Commodity Prices",
-            "subtitle": "A data story built from daily weather observations across major coffee-growing regions, historical coffee commodity prices, and geospatial interpolation.",
+            "subtitle": "A data story built from daily weather observations across major coffee-growing regions, historical coffee commodity prices, Prophet time-series modeling, and geospatial interpolation.",
         },
         "summary": {
             "rowCount": row_count,
@@ -644,6 +871,7 @@ def main():
             "forecastEnd": forecast_points[-1]["date"],
             "points": forecast_points,
         },
+        "prophet": prophet,
         "series": {
             "history36Months": history_points,
             "recent60Days": recent_trend,
@@ -655,6 +883,7 @@ def main():
             "Correlations were measured with Pearson coefficients against the daily coffee close price in USD per 60 kg bag.",
             "The geospatial section compares regional weather patterns across high-price and low-price periods and includes an ordinary kriging interpolation over the latest daily snapshot.",
             "The forecast is a simple statistical baseline, not a causal or production trading model. It extends the recent 180-day trend and reports a residual-based uncertainty band.",
+            "The Prophet section fits an additive trend and seasonality model with aggregated weather and FX regressors, then evaluates it against the latest 180-day holdout window.",
         ],
     }
 

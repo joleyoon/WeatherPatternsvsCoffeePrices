@@ -26,9 +26,10 @@ The website is a static single-page dashboard with sections for:
 - overview
 - combined analysis
 - forecast
+- Prophet time-series analysis
 - methodology
 
-The analysis section includes market-level charts, summary tables, geospatial maps, and a kriging interpolation surface.
+The analysis section includes market-level charts, summary tables, geospatial maps, a Prophet model with weather and FX regressors, and a kriging interpolation surface.
 
 ## Refreshing the Website Data
 
@@ -39,6 +40,7 @@ python3 scripts/generate_analysis_data.py
 ```
 
 This rewrites [assets/js/analysis-data.js](/Users/joelyoon/Documents/git_repo/WeatherPatternsvsCoffeePrices/assets/js/analysis-data.js), which the website reads directly.
+The generator uses the installed `prophet` package for the Prophet section; if it is unavailable, the section falls back to the recent linear baseline.
 
 ## Running the Kriging Script
 

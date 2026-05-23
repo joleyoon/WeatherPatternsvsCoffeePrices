@@ -1,7 +1,7 @@
 window.analysisData = {
   "project": {
     "title": "Analyzing the Relationship Between Weather Patterns and Coffee Commodity Prices",
-    "subtitle": "A data story built from daily weather observations across major coffee-growing regions, historical coffee commodity prices, and geospatial interpolation."
+    "subtitle": "A data story built from daily weather observations across major coffee-growing regions, historical coffee commodity prices, Prophet time-series modeling, and geospatial interpolation."
   },
   "summary": {
     "rowCount": 233000,
@@ -427,6 +427,1065 @@ window.analysisData = {
         "predictedPrice": 440.72,
         "lowerBound": 400.47,
         "upperBound": 480.97
+      }
+    ]
+  },
+  "prophet": {
+    "available": true,
+    "method": "Prophet additive trend and seasonality model with aggregated weather and FX regressors; future regressor inputs are held at their latest 30-day averages.",
+    "modelType": "Prophet with weather and FX regressors",
+    "horizonDays": 30,
+    "holdoutDays": 180,
+    "intervalWidth": 80,
+    "forecastStart": "2025-07-10",
+    "forecastEnd": "2025-08-08",
+    "averageProjectedPrice": 426.33,
+    "minProjectedPrice": 421.35,
+    "maxProjectedPrice": 430.28,
+    "rmse": 145.71,
+    "mae": 137.67,
+    "mape": 27.6,
+    "coverage": 3.9,
+    "trendChange": 52.16,
+    "trendChangePct": 13.8,
+    "seasonality": {
+      "yearlyRange": 3.37,
+      "weeklyRange": 0.35
+    },
+    "regressorProfile": [
+      {
+        "name": "Temp_Max",
+        "label": "Max temperature",
+        "value": 24.26,
+        "unit": "C"
+      },
+      {
+        "name": "Temp_Min",
+        "label": "Min temperature",
+        "value": 15.88,
+        "unit": "C"
+      },
+      {
+        "name": "Humidity",
+        "label": "Humidity",
+        "value": 81.88,
+        "unit": "%"
+      },
+      {
+        "name": "Solar_Radiation",
+        "label": "Solar radiation",
+        "value": 15.7,
+        "unit": "MJ/m2"
+      },
+      {
+        "name": "Precipitation_mm",
+        "label": "Precipitation",
+        "value": 8.69,
+        "unit": "mm"
+      },
+      {
+        "name": "brl",
+        "label": "Brazilian real",
+        "value": 5.48,
+        "unit": "BRL/USD"
+      },
+      {
+        "name": "cny",
+        "label": "Chinese yuan",
+        "value": 7.18,
+        "unit": "CNY/USD"
+      },
+      {
+        "name": "mxn",
+        "label": "Mexican peso",
+        "value": 18.87,
+        "unit": "MXN/USD"
+      }
+    ],
+    "components": [
+      {
+        "name": "cny",
+        "label": "Chinese yuan",
+        "coefficient": -74.973,
+        "direction": "Negative"
+      },
+      {
+        "name": "brl",
+        "label": "Brazilian real",
+        "coefficient": -21.418,
+        "direction": "Negative"
+      },
+      {
+        "name": "mxn",
+        "label": "Mexican peso",
+        "coefficient": 20.695,
+        "direction": "Positive"
+      },
+      {
+        "name": "Temp_Min",
+        "label": "Min temperature",
+        "coefficient": -1.809,
+        "direction": "Negative"
+      },
+      {
+        "name": "Temp_Max",
+        "label": "Max temperature",
+        "coefficient": -1.296,
+        "direction": "Negative"
+      },
+      {
+        "name": "Precipitation_mm",
+        "label": "Precipitation",
+        "coefficient": 0.569,
+        "direction": "Positive"
+      },
+      {
+        "name": "Humidity",
+        "label": "Humidity",
+        "coefficient": -0.3,
+        "direction": "Negative"
+      },
+      {
+        "name": "Solar_Radiation",
+        "label": "Solar radiation",
+        "coefficient": 0.101,
+        "direction": "Positive"
+      }
+    ],
+    "history": [
+      {
+        "date": "2025-03-12",
+        "actualPrice": 518.79,
+        "predictedPrice": 411.94
+      },
+      {
+        "date": "2025-03-13",
+        "actualPrice": 516.67,
+        "predictedPrice": 411.3
+      },
+      {
+        "date": "2025-03-14",
+        "actualPrice": 505.43,
+        "predictedPrice": 407.75
+      },
+      {
+        "date": "2025-03-15",
+        "actualPrice": 505.43,
+        "predictedPrice": 406.44
+      },
+      {
+        "date": "2025-03-16",
+        "actualPrice": 505.43,
+        "predictedPrice": 409.39
+      },
+      {
+        "date": "2025-03-17",
+        "actualPrice": 515.02,
+        "predictedPrice": 411.64
+      },
+      {
+        "date": "2025-03-18",
+        "actualPrice": 512.11,
+        "predictedPrice": 415.01
+      },
+      {
+        "date": "2025-03-19",
+        "actualPrice": 521.97,
+        "predictedPrice": 416.94
+      },
+      {
+        "date": "2025-03-20",
+        "actualPrice": 518.72,
+        "predictedPrice": 415.71
+      },
+      {
+        "date": "2025-03-21",
+        "actualPrice": 517.73,
+        "predictedPrice": 415.87
+      },
+      {
+        "date": "2025-03-22",
+        "actualPrice": 517.73,
+        "predictedPrice": 415.86
+      },
+      {
+        "date": "2025-03-23",
+        "actualPrice": 517.73,
+        "predictedPrice": 422.91
+      },
+      {
+        "date": "2025-03-24",
+        "actualPrice": 520.38,
+        "predictedPrice": 415.21
+      },
+      {
+        "date": "2025-03-25",
+        "actualPrice": 527.19,
+        "predictedPrice": 419.98
+      },
+      {
+        "date": "2025-03-26",
+        "actualPrice": 518.53,
+        "predictedPrice": 419.54
+      },
+      {
+        "date": "2025-03-27",
+        "actualPrice": 501.07,
+        "predictedPrice": 418.83
+      },
+      {
+        "date": "2025-03-28",
+        "actualPrice": 502.59,
+        "predictedPrice": 420.57
+      },
+      {
+        "date": "2025-03-29",
+        "actualPrice": 502.59,
+        "predictedPrice": 418.59
+      },
+      {
+        "date": "2025-03-30",
+        "actualPrice": 502.59,
+        "predictedPrice": 418.39
+      },
+      {
+        "date": "2025-03-31",
+        "actualPrice": 502.32,
+        "predictedPrice": 420.35
+      },
+      {
+        "date": "2025-04-01",
+        "actualPrice": 514.62,
+        "predictedPrice": 418.83
+      },
+      {
+        "date": "2025-04-02",
+        "actualPrice": 514.36,
+        "predictedPrice": 423.53
+      },
+      {
+        "date": "2025-04-03",
+        "actualPrice": 509.6,
+        "predictedPrice": 413.07
+      },
+      {
+        "date": "2025-04-04",
+        "actualPrice": 483.74,
+        "predictedPrice": 420.53
+      },
+      {
+        "date": "2025-04-05",
+        "actualPrice": 483.74,
+        "predictedPrice": 422.18
+      },
+      {
+        "date": "2025-04-06",
+        "actualPrice": 483.74,
+        "predictedPrice": 424.63
+      },
+      {
+        "date": "2025-04-07",
+        "actualPrice": 456.09,
+        "predictedPrice": 424.18
+      },
+      {
+        "date": "2025-04-08",
+        "actualPrice": 453.58,
+        "predictedPrice": 423.98
+      },
+      {
+        "date": "2025-04-09",
+        "actualPrice": 451.99,
+        "predictedPrice": 424.88
+      },
+      {
+        "date": "2025-04-10",
+        "actualPrice": 453.51,
+        "predictedPrice": 421.85
+      },
+      {
+        "date": "2025-04-11",
+        "actualPrice": 473.15,
+        "predictedPrice": 422.24
+      },
+      {
+        "date": "2025-04-12",
+        "actualPrice": 473.15,
+        "predictedPrice": 423.77
+      },
+      {
+        "date": "2025-04-13",
+        "actualPrice": 473.15,
+        "predictedPrice": 425.42
+      },
+      {
+        "date": "2025-04-14",
+        "actualPrice": 476.73,
+        "predictedPrice": 416.34
+      },
+      {
+        "date": "2025-04-15",
+        "actualPrice": 488.63,
+        "predictedPrice": 411.26
+      },
+      {
+        "date": "2025-04-16",
+        "actualPrice": 497.43,
+        "predictedPrice": 413.5
+      },
+      {
+        "date": "2025-04-17",
+        "actualPrice": 496.7,
+        "predictedPrice": 411.74
+      },
+      {
+        "date": "2025-04-18",
+        "actualPrice": 496.7,
+        "predictedPrice": 408.27
+      },
+      {
+        "date": "2025-04-19",
+        "actualPrice": 496.7,
+        "predictedPrice": 410.09
+      },
+      {
+        "date": "2025-04-20",
+        "actualPrice": 496.7,
+        "predictedPrice": 409.05
+      },
+      {
+        "date": "2025-04-21",
+        "actualPrice": 485.19,
+        "predictedPrice": 410.42
+      },
+      {
+        "date": "2025-04-22",
+        "actualPrice": 499.54,
+        "predictedPrice": 409.12
+      },
+      {
+        "date": "2025-04-23",
+        "actualPrice": 519.05,
+        "predictedPrice": 414.29
+      },
+      {
+        "date": "2025-04-24",
+        "actualPrice": 539.69,
+        "predictedPrice": 413.69
+      },
+      {
+        "date": "2025-04-25",
+        "actualPrice": 540.02,
+        "predictedPrice": 412.1
+      },
+      {
+        "date": "2025-04-26",
+        "actualPrice": 540.02,
+        "predictedPrice": 412.36
+      },
+      {
+        "date": "2025-04-27",
+        "actualPrice": 540.02,
+        "predictedPrice": 414.03
+      },
+      {
+        "date": "2025-04-28",
+        "actualPrice": 557.61,
+        "predictedPrice": 411.71
+      },
+      {
+        "date": "2025-04-29",
+        "actualPrice": 545.84,
+        "predictedPrice": 416.35
+      },
+      {
+        "date": "2025-04-30",
+        "actualPrice": 547.1,
+        "predictedPrice": 417.48
+      },
+      {
+        "date": "2025-05-01",
+        "actualPrice": 523.42,
+        "predictedPrice": 417.57
+      },
+      {
+        "date": "2025-05-02",
+        "actualPrice": 523.02,
+        "predictedPrice": 418.59
+      },
+      {
+        "date": "2025-05-03",
+        "actualPrice": 523.02,
+        "predictedPrice": 418.51
+      },
+      {
+        "date": "2025-05-04",
+        "actualPrice": 523.02,
+        "predictedPrice": 418.68
+      },
+      {
+        "date": "2025-05-05",
+        "actualPrice": 527.72,
+        "predictedPrice": 418.61
+      },
+      {
+        "date": "2025-05-06",
+        "actualPrice": 530.56,
+        "predictedPrice": 421.33
+      },
+      {
+        "date": "2025-05-07",
+        "actualPrice": 524.08,
+        "predictedPrice": 415.79
+      },
+      {
+        "date": "2025-05-08",
+        "actualPrice": 526.2,
+        "predictedPrice": 416.16
+      },
+      {
+        "date": "2025-05-09",
+        "actualPrice": 525.34,
+        "predictedPrice": 412.86
+      },
+      {
+        "date": "2025-05-10",
+        "actualPrice": 525.34,
+        "predictedPrice": 414.24
+      },
+      {
+        "date": "2025-05-11",
+        "actualPrice": 525.34,
+        "predictedPrice": 414.11
+      },
+      {
+        "date": "2025-05-12",
+        "actualPrice": 505.89,
+        "predictedPrice": 421.43
+      },
+      {
+        "date": "2025-05-13",
+        "actualPrice": 509.07,
+        "predictedPrice": 419.91
+      },
+      {
+        "date": "2025-05-14",
+        "actualPrice": 494.65,
+        "predictedPrice": 417.1
+      },
+      {
+        "date": "2025-05-15",
+        "actualPrice": 509.2,
+        "predictedPrice": 420.23
+      },
+      {
+        "date": "2025-05-16",
+        "actualPrice": 497.69,
+        "predictedPrice": 419.29
+      },
+      {
+        "date": "2025-05-17",
+        "actualPrice": 497.69,
+        "predictedPrice": 417.94
+      },
+      {
+        "date": "2025-05-18",
+        "actualPrice": 497.69,
+        "predictedPrice": 418.04
+      },
+      {
+        "date": "2025-05-19",
+        "actualPrice": 497.56,
+        "predictedPrice": 416.86
+      },
+      {
+        "date": "2025-05-20",
+        "actualPrice": 488.5,
+        "predictedPrice": 415.11
+      },
+      {
+        "date": "2025-05-21",
+        "actualPrice": 489.82,
+        "predictedPrice": 414.65
+      },
+      {
+        "date": "2025-05-22",
+        "actualPrice": 477.19,
+        "predictedPrice": 416.07
+      },
+      {
+        "date": "2025-05-23",
+        "actualPrice": 477.52,
+        "predictedPrice": 416.04
+      },
+      {
+        "date": "2025-05-24",
+        "actualPrice": 477.52,
+        "predictedPrice": 416.14
+      },
+      {
+        "date": "2025-05-25",
+        "actualPrice": 477.52,
+        "predictedPrice": 415.4
+      },
+      {
+        "date": "2025-05-26",
+        "actualPrice": 477.52,
+        "predictedPrice": 417.13
+      },
+      {
+        "date": "2025-05-27",
+        "actualPrice": 478.45,
+        "predictedPrice": 415.23
+      },
+      {
+        "date": "2025-05-28",
+        "actualPrice": 465.55,
+        "predictedPrice": 416.05
+      },
+      {
+        "date": "2025-05-29",
+        "actualPrice": 460.85,
+        "predictedPrice": 418.45
+      },
+      {
+        "date": "2025-05-30",
+        "actualPrice": 452.98,
+        "predictedPrice": 417.37
+      },
+      {
+        "date": "2025-05-31",
+        "actualPrice": 452.98,
+        "predictedPrice": 416.92
+      },
+      {
+        "date": "2025-06-01",
+        "actualPrice": 452.98,
+        "predictedPrice": 418.23
+      },
+      {
+        "date": "2025-06-02",
+        "actualPrice": 455.63,
+        "predictedPrice": 417.5
+      },
+      {
+        "date": "2025-06-03",
+        "actualPrice": 450.87,
+        "predictedPrice": 420.58
+      },
+      {
+        "date": "2025-06-04",
+        "actualPrice": 457.88,
+        "predictedPrice": 419.41
+      },
+      {
+        "date": "2025-06-05",
+        "actualPrice": 475.87,
+        "predictedPrice": 417.79
+      },
+      {
+        "date": "2025-06-06",
+        "actualPrice": 473.62,
+        "predictedPrice": 414.69
+      },
+      {
+        "date": "2025-06-07",
+        "actualPrice": 473.62,
+        "predictedPrice": 416.5
+      },
+      {
+        "date": "2025-06-08",
+        "actualPrice": 473.62,
+        "predictedPrice": 415.99
+      },
+      {
+        "date": "2025-06-09",
+        "actualPrice": 478.25,
+        "predictedPrice": 417.09
+      },
+      {
+        "date": "2025-06-10",
+        "actualPrice": 469.65,
+        "predictedPrice": 415.58
+      },
+      {
+        "date": "2025-06-11",
+        "actualPrice": 463.83,
+        "predictedPrice": 413.09
+      },
+      {
+        "date": "2025-06-12",
+        "actualPrice": 460.06,
+        "predictedPrice": 418.77
+      },
+      {
+        "date": "2025-06-13",
+        "actualPrice": 462.57,
+        "predictedPrice": 418.98
+      },
+      {
+        "date": "2025-06-14",
+        "actualPrice": 462.57,
+        "predictedPrice": 416.14
+      },
+      {
+        "date": "2025-06-15",
+        "actualPrice": 462.57,
+        "predictedPrice": 415.41
+      },
+      {
+        "date": "2025-06-16",
+        "actualPrice": 454.97,
+        "predictedPrice": 416.56
+      },
+      {
+        "date": "2025-06-17",
+        "actualPrice": 444.25,
+        "predictedPrice": 417.29
+      },
+      {
+        "date": "2025-06-18",
+        "actualPrice": 429.77,
+        "predictedPrice": 420.65
+      },
+      {
+        "date": "2025-06-19",
+        "actualPrice": 429.77,
+        "predictedPrice": 415.65
+      },
+      {
+        "date": "2025-06-20",
+        "actualPrice": 422.03,
+        "predictedPrice": 418.51
+      },
+      {
+        "date": "2025-06-21",
+        "actualPrice": 422.03,
+        "predictedPrice": 417.63
+      },
+      {
+        "date": "2025-06-22",
+        "actualPrice": 422.03,
+        "predictedPrice": 417.42
+      },
+      {
+        "date": "2025-06-23",
+        "actualPrice": 436.91,
+        "predictedPrice": 418.16
+      },
+      {
+        "date": "2025-06-24",
+        "actualPrice": 417.14,
+        "predictedPrice": 419.01
+      },
+      {
+        "date": "2025-06-25",
+        "actualPrice": 408.27,
+        "predictedPrice": 416.85
+      },
+      {
+        "date": "2025-06-26",
+        "actualPrice": 409.4,
+        "predictedPrice": 418.7
+      },
+      {
+        "date": "2025-06-27",
+        "actualPrice": 409.93,
+        "predictedPrice": 412.86
+      },
+      {
+        "date": "2025-06-28",
+        "actualPrice": 409.93,
+        "predictedPrice": 414.56
+      },
+      {
+        "date": "2025-06-29",
+        "actualPrice": 409.93,
+        "predictedPrice": 413.16
+      },
+      {
+        "date": "2025-06-30",
+        "actualPrice": 405.76,
+        "predictedPrice": 414.52
+      },
+      {
+        "date": "2025-07-01",
+        "actualPrice": 395.31,
+        "predictedPrice": 413.7
+      },
+      {
+        "date": "2025-07-02",
+        "actualPrice": 394.12,
+        "predictedPrice": 415.85
+      },
+      {
+        "date": "2025-07-03",
+        "actualPrice": 387.11,
+        "predictedPrice": 414.93
+      },
+      {
+        "date": "2025-07-04",
+        "actualPrice": 387.11,
+        "predictedPrice": 414.53
+      },
+      {
+        "date": "2025-07-05",
+        "actualPrice": 387.11,
+        "predictedPrice": 415.32
+      },
+      {
+        "date": "2025-07-06",
+        "actualPrice": 387.11,
+        "predictedPrice": 417.56
+      },
+      {
+        "date": "2025-07-07",
+        "actualPrice": 370.44,
+        "predictedPrice": 422.12
+      },
+      {
+        "date": "2025-07-08",
+        "actualPrice": 380.16,
+        "predictedPrice": 418.3
+      },
+      {
+        "date": "2025-07-09",
+        "actualPrice": 378.11,
+        "predictedPrice": 417.93
+      }
+    ],
+    "points": [
+      {
+        "date": "2025-07-10",
+        "predictedPrice": 421.35,
+        "lowerBound": 389.4,
+        "upperBound": 453.23,
+        "trend": 386.05,
+        "yearly": -5.59,
+        "weekly": 0.14
+      },
+      {
+        "date": "2025-07-11",
+        "predictedPrice": 421.6,
+        "lowerBound": 386.42,
+        "upperBound": 453.68,
+        "trend": 386.25,
+        "yearly": -5.35,
+        "weekly": -0.05
+      },
+      {
+        "date": "2025-07-12",
+        "predictedPrice": 421.98,
+        "lowerBound": 389.4,
+        "upperBound": 452.8,
+        "trend": 386.45,
+        "yearly": -5.12,
+        "weekly": -0.09
+      },
+      {
+        "date": "2025-07-13",
+        "predictedPrice": 422.33,
+        "lowerBound": 388.16,
+        "upperBound": 453.15,
+        "trend": 386.64,
+        "yearly": -4.9,
+        "weekly": -0.16
+      },
+      {
+        "date": "2025-07-14",
+        "predictedPrice": 422.78,
+        "lowerBound": 386.49,
+        "upperBound": 453.25,
+        "trend": 386.84,
+        "yearly": -4.69,
+        "weekly": -0.11
+      },
+      {
+        "date": "2025-07-15",
+        "predictedPrice": 423.39,
+        "lowerBound": 391.4,
+        "upperBound": 455.94,
+        "trend": 387.04,
+        "yearly": -4.49,
+        "weekly": 0.09
+      },
+      {
+        "date": "2025-07-16",
+        "predictedPrice": 423.87,
+        "lowerBound": 391.07,
+        "upperBound": 455.19,
+        "trend": 387.24,
+        "yearly": -4.3,
+        "weekly": 0.19
+      },
+      {
+        "date": "2025-07-17",
+        "predictedPrice": 424.2,
+        "lowerBound": 390.76,
+        "upperBound": 458.22,
+        "trend": 387.44,
+        "yearly": -4.12,
+        "weekly": 0.14
+      },
+      {
+        "date": "2025-07-18",
+        "predictedPrice": 424.39,
+        "lowerBound": 391.98,
+        "upperBound": 456.11,
+        "trend": 387.63,
+        "yearly": -3.95,
+        "weekly": -0.05
+      },
+      {
+        "date": "2025-07-19",
+        "predictedPrice": 424.7,
+        "lowerBound": 389.4,
+        "upperBound": 458.39,
+        "trend": 387.83,
+        "yearly": -3.79,
+        "weekly": -0.09
+      },
+      {
+        "date": "2025-07-20",
+        "predictedPrice": 424.99,
+        "lowerBound": 390.2,
+        "upperBound": 458.43,
+        "trend": 388.03,
+        "yearly": -3.63,
+        "weekly": -0.16
+      },
+      {
+        "date": "2025-07-21",
+        "predictedPrice": 425.38,
+        "lowerBound": 391.03,
+        "upperBound": 457.33,
+        "trend": 388.23,
+        "yearly": -3.49,
+        "weekly": -0.11
+      },
+      {
+        "date": "2025-07-22",
+        "predictedPrice": 425.92,
+        "lowerBound": 393.55,
+        "upperBound": 459.64,
+        "trend": 388.43,
+        "yearly": -3.35,
+        "weekly": 0.09
+      },
+      {
+        "date": "2025-07-23",
+        "predictedPrice": 426.34,
+        "lowerBound": 395.62,
+        "upperBound": 460.2,
+        "trend": 388.62,
+        "yearly": -3.22,
+        "weekly": 0.19
+      },
+      {
+        "date": "2025-07-24",
+        "predictedPrice": 426.61,
+        "lowerBound": 393.77,
+        "upperBound": 457.77,
+        "trend": 388.82,
+        "yearly": -3.1,
+        "weekly": 0.14
+      },
+      {
+        "date": "2025-07-25",
+        "predictedPrice": 426.74,
+        "lowerBound": 395.02,
+        "upperBound": 459.76,
+        "trend": 389.02,
+        "yearly": -2.99,
+        "weekly": -0.05
+      },
+      {
+        "date": "2025-07-26",
+        "predictedPrice": 426.99,
+        "lowerBound": 394.94,
+        "upperBound": 457.8,
+        "trend": 389.22,
+        "yearly": -2.88,
+        "weekly": -0.09
+      },
+      {
+        "date": "2025-07-27",
+        "predictedPrice": 427.22,
+        "lowerBound": 396.69,
+        "upperBound": 459.32,
+        "trend": 389.42,
+        "yearly": -2.78,
+        "weekly": -0.16
+      },
+      {
+        "date": "2025-07-28",
+        "predictedPrice": 427.56,
+        "lowerBound": 397.06,
+        "upperBound": 460.91,
+        "trend": 389.61,
+        "yearly": -2.69,
+        "weekly": -0.11
+      },
+      {
+        "date": "2025-07-29",
+        "predictedPrice": 428.04,
+        "lowerBound": 396.4,
+        "upperBound": 458.7,
+        "trend": 389.81,
+        "yearly": -2.61,
+        "weekly": 0.09
+      },
+      {
+        "date": "2025-07-30",
+        "predictedPrice": 428.41,
+        "lowerBound": 394.92,
+        "upperBound": 460.69,
+        "trend": 390.01,
+        "yearly": -2.53,
+        "weekly": 0.19
+      },
+      {
+        "date": "2025-07-31",
+        "predictedPrice": 428.62,
+        "lowerBound": 395.69,
+        "upperBound": 461.95,
+        "trend": 390.21,
+        "yearly": -2.47,
+        "weekly": 0.14
+      },
+      {
+        "date": "2025-08-01",
+        "predictedPrice": 428.7,
+        "lowerBound": 396.9,
+        "upperBound": 462.42,
+        "trend": 390.41,
+        "yearly": -2.41,
+        "weekly": -0.05
+      },
+      {
+        "date": "2025-08-02",
+        "predictedPrice": 428.9,
+        "lowerBound": 393.69,
+        "upperBound": 461.32,
+        "trend": 390.6,
+        "yearly": -2.36,
+        "weekly": -0.09
+      },
+      {
+        "date": "2025-08-03",
+        "predictedPrice": 429.07,
+        "lowerBound": 397.53,
+        "upperBound": 459.07,
+        "trend": 390.8,
+        "yearly": -2.32,
+        "weekly": -0.16
+      },
+      {
+        "date": "2025-08-04",
+        "predictedPrice": 429.35,
+        "lowerBound": 396.28,
+        "upperBound": 461.75,
+        "trend": 391.0,
+        "yearly": -2.28,
+        "weekly": -0.11
+      },
+      {
+        "date": "2025-08-05",
+        "predictedPrice": 429.78,
+        "lowerBound": 397.74,
+        "upperBound": 462.33,
+        "trend": 391.2,
+        "yearly": -2.25,
+        "weekly": 0.09
+      },
+      {
+        "date": "2025-08-06",
+        "predictedPrice": 430.1,
+        "lowerBound": 397.58,
+        "upperBound": 461.21,
+        "trend": 391.4,
+        "yearly": -2.24,
+        "weekly": 0.19
+      },
+      {
+        "date": "2025-08-07",
+        "predictedPrice": 430.26,
+        "lowerBound": 398.64,
+        "upperBound": 460.79,
+        "trend": 391.59,
+        "yearly": -2.22,
+        "weekly": 0.14
+      },
+      {
+        "date": "2025-08-08",
+        "predictedPrice": 430.28,
+        "lowerBound": 400.18,
+        "upperBound": 465.4,
+        "trend": 391.79,
+        "yearly": -2.22,
+        "weekly": -0.05
+      }
+    ],
+    "validationRows": [
+      {
+        "date": "2025-06-30",
+        "actualPrice": 405.76,
+        "predictedPrice": 360.54,
+        "error": 45.22
+      },
+      {
+        "date": "2025-07-01",
+        "actualPrice": 395.31,
+        "predictedPrice": 358.69,
+        "error": 36.62
+      },
+      {
+        "date": "2025-07-02",
+        "actualPrice": 394.12,
+        "predictedPrice": 360.56,
+        "error": 33.56
+      },
+      {
+        "date": "2025-07-03",
+        "actualPrice": 387.11,
+        "predictedPrice": 360.68,
+        "error": 26.43
+      },
+      {
+        "date": "2025-07-04",
+        "actualPrice": 387.11,
+        "predictedPrice": 360.96,
+        "error": 26.15
+      },
+      {
+        "date": "2025-07-05",
+        "actualPrice": 387.11,
+        "predictedPrice": 360.83,
+        "error": 26.28
+      },
+      {
+        "date": "2025-07-06",
+        "actualPrice": 387.11,
+        "predictedPrice": 362.23,
+        "error": 24.88
+      },
+      {
+        "date": "2025-07-07",
+        "actualPrice": 370.44,
+        "predictedPrice": 364.44,
+        "error": 6.0
+      },
+      {
+        "date": "2025-07-08",
+        "actualPrice": 380.16,
+        "predictedPrice": 363.72,
+        "error": 16.44
+      },
+      {
+        "date": "2025-07-09",
+        "actualPrice": 378.11,
+        "predictedPrice": 363.42,
+        "error": 14.7
       }
     ]
   },
@@ -21315,6 +22374,7 @@ window.analysisData = {
     "Daily weather variables were averaged across all coffee-growing locations for each trading date to create a market-level weather view.",
     "Correlations were measured with Pearson coefficients against the daily coffee close price in USD per 60 kg bag.",
     "The geospatial section compares regional weather patterns across high-price and low-price periods and includes an ordinary kriging interpolation over the latest daily snapshot.",
-    "The forecast is a simple statistical baseline, not a causal or production trading model. It extends the recent 180-day trend and reports a residual-based uncertainty band."
+    "The forecast is a simple statistical baseline, not a causal or production trading model. It extends the recent 180-day trend and reports a residual-based uncertainty band.",
+    "The Prophet section fits an additive trend and seasonality model with aggregated weather and FX regressors, then evaluates it against the latest 180-day holdout window."
   ]
 };
