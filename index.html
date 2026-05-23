@@ -229,7 +229,7 @@
 				<div class="content">
 					<div class="inner">
 						<h1 id="project-title">Analyzing the Relationship Between Weather Patterns and Coffee Commodity Prices</h1>
-						<p id="project-subtitle">Daily weather observations, commodity pricing trends, geospatial regime analysis, and kriging interpolation inside a single project dashboard.</p>
+						<p id="project-subtitle">Daily weather observations, commodity pricing trends, Prophet time-series modeling, geospatial regime analysis, and kriging interpolation inside a single project dashboard.</p>
 					</div>
 				</div>
 				<nav>
@@ -237,6 +237,7 @@
 						<li><a href="#overview">Overview</a></li>
 						<li><a href="#analysis">Analysis</a></li>
 						<li><a href="#forecast">Forecast</a></li>
+						<li><a href="#prophet">Prophet</a></li>
 						<li><a href="#method">Method</a></li>
 					</ul>
 				</nav>
@@ -330,6 +331,38 @@
 						<h3>Next 30 Days</h3>
 						<p class="note-text">Projected closing-price path if the recent trend persists without a major structural shift.</p>
 						<div id="forecast-table" class="table-wrapper"></div>
+					</div>
+				</article>
+
+				<article id="prophet">
+					<h2 class="major">Prophet</h2>
+					<span class="image main"><img src="images/pic03.jpg" alt="Coffee farm weather outlook" /></span>
+					<p class="article-intro">This section adds a Prophet time-series model to separate trend, weekly and yearly seasonality, and the conditional effects of aggregated weather and currency variables. The forecast uses trailing 30-day weather and FX averages as the future regressor profile.</p>
+					<div id="prophet-metrics" class="metrics-grid"></div>
+					<div id="prophet-chart" class="chart-shell"></div>
+					<div class="table-grid">
+						<div class="data-panel">
+							<h3>Model Drivers</h3>
+							<p class="note-text">Largest Prophet regressor coefficients after fitting the full daily series.</p>
+							<div id="prophet-components" class="table-wrapper"></div>
+						</div>
+						<div class="data-panel">
+							<h3>Future Regressor Profile</h3>
+							<p class="note-text">Values supplied to the next 30 forecast days.</p>
+							<div id="prophet-profile" class="table-wrapper"></div>
+						</div>
+					</div>
+					<div class="table-grid">
+						<div class="data-panel">
+							<h3>Prophet Forecast</h3>
+							<p class="note-text">Next 30 days from the model with the central prediction and 80% uncertainty interval.</p>
+							<div id="prophet-table" class="table-wrapper"></div>
+						</div>
+						<div class="data-panel">
+							<h3>Holdout Validation</h3>
+							<p class="note-text">Latest observed days from the 180-day validation window.</p>
+							<div id="prophet-validation-table" class="table-wrapper"></div>
+						</div>
 					</div>
 				</article>
 
